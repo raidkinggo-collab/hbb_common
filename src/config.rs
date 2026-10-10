@@ -1177,6 +1177,7 @@ impl Config {
             .get(keys::OPTION_DISABLE_CHANGE_PERMANENT_PASSWORD)
             .map(|v| v == "Y")
             .unwrap_or(false)
+            || Self::get_option(keys::OPTION_DISABLE_CHANGE_PERMANENT_PASSWORD) == "Y"
     }
 
     pub fn is_disable_change_id() -> bool {
@@ -1186,6 +1187,7 @@ impl Config {
             .get(keys::OPTION_DISABLE_CHANGE_ID)
             .map(|v| v == "Y")
             .unwrap_or(false)
+            || Self::get_option(keys::OPTION_DISABLE_CHANGE_ID) == "Y"
     }
 
     pub fn is_disable_unlock_pin() -> bool {
@@ -2797,11 +2799,16 @@ pub fn is_outgoing_only() -> bool {
 
 #[inline]
 fn is_some_hard_opton(name: &str) -> bool {
-    HARD_SETTINGS
+    if HARD_SETTINGS
         .read()
         .unwrap()
         .get(name)
         .map_or(false, |x| x == ("Y"))
+    {
+        return true;
+    }
+    // RionsDesk: allow lockdown flags to be set as normal options at install time.
+    Config::get_option(name) == "Y"
 }
 
 #[inline]
