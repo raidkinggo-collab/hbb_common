@@ -2770,20 +2770,29 @@ fn is_option_can_save(
 
 #[inline]
 pub fn is_incoming_only() -> bool {
-    HARD_SETTINGS
+    if HARD_SETTINGS
         .read()
         .unwrap()
         .get("conn-type")
         .map_or(false, |x| x == ("incoming"))
+    {
+        return true;
+    }
+    // RionsDesk: allow role selection via a normal option set at install time.
+    Config::get_option("conn-type") == "incoming"
 }
 
 #[inline]
 pub fn is_outgoing_only() -> bool {
-    HARD_SETTINGS
+    if HARD_SETTINGS
         .read()
         .unwrap()
         .get("conn-type")
         .map_or(false, |x| x == ("outgoing"))
+    {
+        return true;
+    }
+    Config::get_option("conn-type") == "outgoing"
 }
 
 #[inline]
